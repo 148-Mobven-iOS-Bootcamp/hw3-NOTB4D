@@ -26,6 +26,8 @@ class CalculatorBrain {
             accumulator = sqrt(result)
         case "=":
             break
+        case "C":
+            accumulator = 0
         default:
             break
         }
