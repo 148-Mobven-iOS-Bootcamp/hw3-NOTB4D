@@ -18,22 +18,31 @@ class CalculatorBrain {
         }
     }
 
-    func performOperation(_ operation: String?) {
-        guard let operation = operation else { return }
-
-        switch operation {
-        case "√":
-            accumulator = sqrt(result)
-        case "=":
-            break
-        case "C":
-            accumulator = 0
-        default:
-            break
+    func performOperation(_ operation: String) {
+        if let constant = operations[operation] {
+            switch constant{
+            case .Constant(let constantValue): accumulator = constantValue
+            case .UnaryOperation(let function): accumulator = function(accumulator)
+            case .BinaryOperation: break
+            case .Equals: break
+            }
+            
         }
     }
 
     func setOperand(_ value: Double) {
         accumulator = value
+    }
+    
+    var operations : Dictionary<String,Operation> = [
+        "√" : Operation.UnaryOperation(sqrt),
+        
+    ]
+    
+    enum Operation {
+        case Constant(Double)
+        case UnaryOperation((Double) -> Double)
+        case BinaryOperation
+        case Equals
     }
 }
