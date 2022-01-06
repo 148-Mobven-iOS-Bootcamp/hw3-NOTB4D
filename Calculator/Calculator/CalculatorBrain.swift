@@ -9,7 +9,7 @@ import Foundation
 
 class CalculatorBrain {
     //istenen işlemler + - * / bonus C CE =
-    //standford university ios 9 > youtube video 1 ya da 2
+
     private var accumulator: Double = 0
 
     var result: Double {
@@ -28,6 +28,8 @@ class CalculatorBrain {
                 waiting = WaitingOperation(binaryFunc: function, firstOperand: accumulator)
             case .Equals:
                 executeWaitingBinaryOperation()
+            case .Clear:
+                accumulator = 0
             }
             
         }
@@ -56,7 +58,8 @@ class CalculatorBrain {
         "÷" : Operation.BinaryOperation({ return $0 / $1 }),
         "+" : Operation.BinaryOperation({ return $0 + $1 }),
         "−" : Operation.BinaryOperation({ return $0 - $1 }),
-        "=" : Operation.Equals
+        "=" : Operation.Equals,
+        "C" : Operation.Clear
         
     ]
     
@@ -65,5 +68,6 @@ class CalculatorBrain {
         case UnaryOperation((Double) -> Double)
         case BinaryOperation((Double,Double)-> Double)
         case Equals
+        case Clear
     }
 }
