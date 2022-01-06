@@ -23,26 +23,47 @@ class CalculatorBrain {
             switch constant{
             case .Constant(let constantValue): accumulator = constantValue
             case .UnaryOperation(let function): accumulator = function(accumulator)
-            case .BinaryOperation: break
-            case .Equals: break
+            case .BinaryOperation(let function):
+                executeWaitingBinaryOperation()
+                waiting = WaitingOperation(binaryFunc: function, firstOperand: accumulator)
+            case .Equals:
+                executeWaitingBinaryOperation()
             }
             
         }
     }
+    private func executeWaitingBinaryOperation(){
+        if waiting != nil{
+           accumulator = waiting!.binaryFunc(waiting!.firstOperand, accumulator)
+           waiting = nil
+       }
 
+    }
+    private var waiting:  WaitingOperation?
+    
+    struct WaitingOperation{
+        var binaryFunc: (Double,Double) -> Double
+        var firstOperand: Double
+    }
+    
     func setOperand(_ value: Double) {
         accumulator = value
     }
     
     var operations : Dictionary<String,Operation> = [
         "√" : Operation.UnaryOperation(sqrt),
+        "×" : Operation.BinaryOperation({ return $0 * $1 }),
+        "÷" : Operation.BinaryOperation({ return $0 / $1 }),
+        "+" : Operation.BinaryOperation({ return $0 + $1 }),
+        "−" : Operation.BinaryOperation({ return $0 - $1 }),
+        "=" : Operation.Equals
         
     ]
     
     enum Operation {
         case Constant(Double)
         case UnaryOperation((Double) -> Double)
-        case BinaryOperation
+        case BinaryOperation((Double,Double)-> Double)
         case Equals
     }
 }
