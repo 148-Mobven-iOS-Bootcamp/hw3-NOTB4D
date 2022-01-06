@@ -9,7 +9,7 @@ import Foundation
 
 class CalculatorBrain {
     //istenen işlemler + - * / bonus C CE =
-    //standford university ios 9 > youtube video 1 ya da 2
+
     private var accumulator: Double = 0
 
     var result: Double {
@@ -18,20 +18,56 @@ class CalculatorBrain {
         }
     }
 
-    func performOperation(_ operation: String?) {
-        guard let operation = operation else { return }
-
-        switch operation {
-        case "√":
-            accumulator = sqrt(result)
-        case "=":
-            break
-        default:
-            break
+    func performOperation(_ operation: String) {
+        if let constant = operations[operation] {
+            switch constant{
+            case .Constant(let constantValue): accumulator = constantValue
+            case .UnaryOperation(let function): accumulator = function(accumulator)
+            case .BinaryOperation(let function):
+                executeWaitingBinaryOperation()
+                waiting = WaitingOperation(binaryFunc: function, firstOperand: accumulator)
+            case .Equals:
+                executeWaitingBinaryOperation()
+            case .Clear:
+                accumulator = 0
+            }
+            
         }
     }
+    private func executeWaitingBinaryOperation(){
+        if waiting != nil{
+           accumulator = waiting!.binaryFunc(waiting!.firstOperand, accumulator)
+           waiting = nil
+       }
 
+    }
+    private var waiting:  WaitingOperation?
+    
+    struct WaitingOperation{
+        var binaryFunc: (Double,Double) -> Double
+        var firstOperand: Double
+    }
+    
     func setOperand(_ value: Double) {
         accumulator = value
+    }
+    
+    var operations : Dictionary<String,Operation> = [
+        "√" : Operation.UnaryOperation(sqrt),
+        "×" : Operation.BinaryOperation({ return $0 * $1 }),
+        "÷" : Operation.BinaryOperation({ return $0 / $1 }),
+        "+" : Operation.BinaryOperation({ return $0 + $1 }),
+        "−" : Operation.BinaryOperation({ return $0 - $1 }),
+        "=" : Operation.Equals,
+        "C" : Operation.Clear
+        
+    ]
+    
+    enum Operation {
+        case Constant(Double)
+        case UnaryOperation((Double) -> Double)
+        case BinaryOperation((Double,Double)-> Double)
+        case Equals
+        case Clear
     }
 }
