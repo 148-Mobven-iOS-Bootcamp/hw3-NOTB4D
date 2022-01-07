@@ -13,22 +13,39 @@ class ViewController: UIViewController {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
     }
-
-   
+    @IBOutlet private weak var dateYear: UILabel!
+    
+    @IBOutlet private weak var dateDay: UILabel!
+    
+    @IBOutlet private weak var dateMonth: UILabel!
+    
+    
+    @IBOutlet private weak var datePerrtyFormat: UILabel!
+    
+    
+    
+    
     @IBAction func datetimeSelected(_ sender: UIDatePicker) {
-        /*let date = sender.date
-        let calendar = Calendar.current
 
-        let day = calendar.component(.day, from: date)
-        let mounth = calendar.component(.month, from: date)
-        let year = calendar.component(.year, from: date)
-        print("hours = \(day):\(mounth):\(year)")*/
-        
         let date = sender.date
-        print(date.dateAsPrettyString ?? Date())
-        print(date.year ?? Date())
-        print(date.day ?? Date())
-        print(date.mount ?? Date())
+        if let day = date.day {
+        dateDay.text! = "Day : \(day)"
+        }
+        if let month = date.month {
+            dateMonth.text! = "Month : \(month)"
+        }
+        
+        if let year = date.year {
+            dateYear.text! = "Year : \(year)"
+        }
+       
+        if let datePerrty = date.dateAsPrettyString {
+            
+            datePerrtyFormat.text! = "Date : \(datePerrty)"
+        }
+        
+        
+
 
         
     }
@@ -36,6 +53,7 @@ class ViewController: UIViewController {
 }
 extension Date{
     
+    //pretty date için dönüşümü burda yapıyoruz
     var dateAsPrettyString: String? {
         let formatter = DateFormatter()
         formatter.dateFormat = "dd<>MM<>yyyy"
@@ -49,7 +67,7 @@ extension Date{
             return String(t)
 
     }
-    var mount: String? {
+    var month: String? {
             let calendar = Calendar.current
             let t = calendar.component(Calendar.Component.month, from: self)
             return String(t)
