@@ -21,15 +21,27 @@ class CalculatorBrain {
     func performOperation(_ operation: String) {
         if let constant = operations[operation] {
             switch constant{
-            case .Constant(let constantValue): accumulator = constantValue
-            case .UnaryOperation(let function): accumulator = function(accumulator)
+            
+            case .Constant(let constantValue):
+                accumulator = constantValue
+            
+            case .UnaryOperation(let function):
+                accumulator = function(accumulator)
+            
             case .BinaryOperation(let function):
                 executeWaitingBinaryOperation()
                 waiting = WaitingOperation(binaryFunc: function, firstOperand: accumulator)
+            
             case .Equals:
                 executeWaitingBinaryOperation()
-            case .Clear:
+            
+            case .ClearEntry:
                 accumulator = 0
+            
+            case .Clear:
+                waiting?.firstOperand = 0
+                accumulator = 0
+                executeWaitingBinaryOperation()
             }
             
         }
@@ -43,31 +55,34 @@ class CalculatorBrain {
     }
     private var waiting:  WaitingOperation?
     
-    struct WaitingOperation{
+    private struct WaitingOperation{
         var binaryFunc: (Double,Double) -> Double
         var firstOperand: Double
+        
     }
     
     func setOperand(_ value: Double) {
         accumulator = value
     }
     
-    var operations : Dictionary<String,Operation> = [
+    private var operations : Dictionary<String,Operation> = [
         "√" : Operation.UnaryOperation(sqrt),
         "×" : Operation.BinaryOperation({ return $0 * $1 }),
         "÷" : Operation.BinaryOperation({ return $0 / $1 }),
         "+" : Operation.BinaryOperation({ return $0 + $1 }),
         "−" : Operation.BinaryOperation({ return $0 - $1 }),
         "=" : Operation.Equals,
-        "C" : Operation.Clear
+        "CE" : Operation.ClearEntry,
+        "C" : Operation.Clear({ _ in 0.0})
         
     ]
     
-    enum Operation {
+   private enum Operation {
         case Constant(Double)
         case UnaryOperation((Double) -> Double)
         case BinaryOperation((Double,Double)-> Double)
         case Equals
-        case Clear
+        case Clear((Double) -> Double)
+        case ClearEntry
     }
 }
