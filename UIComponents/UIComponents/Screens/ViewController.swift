@@ -133,6 +133,15 @@ class ViewController: UIViewController {
     @IBAction func datePıckerValueChanged(_ sender: UIDatePicker) {
 
         print("Date: ", sender.date) //"27<>12<>2021"  date.year
+        let dateformatter = DateFormatter()
+        dateformatter.dateFormat = "yyyy<>MM<>dd HH:mm:ss"
+        let date = sender.date
+        let calendar = Calendar.current
+
+        let hour = calendar.component(.hour, from: date)
+        let minutes = calendar.component(.minute, from: date)
+        let seconds = calendar.component(.second, from: date)
+        print("hours = \(hour):\(minutes):\(seconds)")
     }
 
 }
